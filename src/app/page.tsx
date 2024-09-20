@@ -16,7 +16,7 @@ export default function Login() {
 
     const response = await fetch('/api/auth/login', { 
       method: 'POST',
-      headers: { 'ContentTupe': 'application/json'},
+      headers: { 'ContentType': 'application/json'},
       body: JSON.stringify({ username, password }),
     })
 
@@ -31,25 +31,29 @@ export default function Login() {
     <main>
       <div className="main">
         <div className="top-bar-container">
-          {/* <img src="" alt="Logo"></img> */}
-          <a href="">About us</a>
+          <img src="" alt="Logo" id="logo" />
+          <div className="about-us">
+            <a href="">About us</a>
+          </div>
         </div>
-        <div className="login-form-container">
-          <h1>Log In</h1>
-          <form className="login-form">
-            <div className="username-form">
-              <input id="login-username" name="username" type="username" placeholder="Username" required />
-            </div>
-            <div className="password-form">
-              <input id="login-password" name="password" type="password" placeholder="Password" required />
-            </div>
-          </form>
-          <button type="button" id="login-button">Log In</button>
+        <div className = "login-center-container">
+          <div className="login-form-container">
+            <h1>Log In</h1>
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="username-form">
+                <input id="login-username" name="username" type="username" placeholder="Username" required />
+              </div>
+              <div className="password-form">
+                <input id="login-password" name="password" type="password" placeholder="Password" required />
+              </div>
+            </form>
+            <h3><a href="" id="forgot-password">Forgot Password?</a></h3>
+            <button type="submit" id="login-button">Log in</button>
+          </div>
+          <div className="create-account-container">
+            <h3 id="new-to-unionizer">New to Unionizer? <a href="" id="join-now">Join now</a></h3>
+          </div>
         </div>
-      </div>
-      <div className="create-account-container">
-        <h1>New User?</h1>
-        <button type="button" id="create-account-button">Create Account</button>
       </div>
     </main>
   );
