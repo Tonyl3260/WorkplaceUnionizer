@@ -7,9 +7,6 @@ import { notFound } from 'next/navigation'
 import Chat from '@/components/chat/chat'
 import Layout from '@/components/Layout'
 
-
-
-
 interface pageProps {
     params: {
         chatId: string

@@ -131,7 +131,6 @@ const Results = () => {
                                     className="result-image"
                                     onError={(e) => {
                                         e.target.onerror = null; 
-                                        e.target.src = defaultImage;
                                     }}
                                 />
                                 <div className="result-details">

@@ -18,10 +18,12 @@ export function AppSidebar({
   chats,
   unionName,
   unionId,
+  polls,
 }: {
   chats: object[];
   unionName: string;
   unionId: string;
+  polls: object[];
 }) {
   console.log("Union ID:", unionId);
   const [isPollModalOpen, setPollModalOpen] = useState(false);
@@ -243,7 +245,7 @@ export function AppSidebar({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <div className="poll-button" onClick={() => setPollModalOpen(true)}>
+                    <div className="poll-button" onClick={(e) => { e.stopPropagation(); setPollModalOpen(true); }}>
                       Unionize Poll
                     </div>
                   </SidebarMenuButton>
@@ -272,6 +274,31 @@ export function AppSidebar({
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          {/* Polls Test Section */}
+          <SidebarGroup>
+            <SidebarGroupLabel className="sidebar-group-label">Polls test</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {polls && polls.length > 0 ? (
+                  polls.map((poll, i) => (
+                    <SidebarMenuItem key={i}>
+                      <SidebarMenuButton asChild>
+                        <div
+                          className="poll-item"
+                          onClick={() => router.push(`/unions/${poll.unionId}/poll/${poll.id}`)}
+                        >
+                          <span>{poll.name}</span>
+                        </div>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))
+                ) : (
+                  <span>No polls available.</span>
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
