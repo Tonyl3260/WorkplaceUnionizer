@@ -11,7 +11,7 @@ const CreateUnion = () => {
     const router = useRouter();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [workplaces, setWorkplaces] = useState([{ workplaceName: '', organization: '', city: '', street: '', addressLine2: '', state: '', zip: '', country: '' }]);
+    const [workplaces, setWorkplaces] = useState([{ workplaceName: '', organization: '', city: '', street: '', addressLine2: '', state: '', zip: '', country: '', employeeCount: 0, isUnionized: false, }]);
     const [visibility, setVisibility] = useState('public');
     const [message, setMessage] = useState('');
     const { user } = useAppSelector(state => state.auth) as { user: User | null };
@@ -29,14 +29,16 @@ const CreateUnion = () => {
         state: string;
         zip: string;
         country: string;
+        isUnionized: boolean;
+        employeeCount: number;
     }
-    const handleWorkplaceChange = (index: number, field: keyof Workplace, value: string) => {
+    const handleWorkplaceChange = (index: number, field: keyof Workplace, value: string | boolean | number) => {
         const updatedWorkplaces = [...workplaces];
         updatedWorkplaces[index][field] = value;
         setWorkplaces(updatedWorkplaces);
     };
     const handleAddWorkplace = () => {
-        setWorkplaces([...workplaces, { workplaceName: '', organization: '', city: '', street: '', addressLine2: '', state: '', zip: '', country: '' }]);
+        setWorkplaces([...workplaces, { workplaceName: '', organization: '', city: '', street: '', addressLine2: '', state: '', zip: '', country: '', employeeCount: 0, isUnionized: false, }]);
     };
     const handleRemoveWorkplace = (index: number) => {
         setWorkplaces(workplaces.filter((_, i) => i !== index));
@@ -116,7 +118,7 @@ const CreateUnion = () => {
                                 </div>
                                 <div className="form-group">
                                     <label><b>Description</b> - Shown to users in search results</label>
-                                    <textarea value={description} onChange={handleDescriptionChange} placeholder="Text box currently being written in changes color" />
+                                    <textarea value={description} onChange={handleDescriptionChange} placeholder="Description of the Union" />
                                 </div>
                             </div>
                             <div className="image-upload-container">
@@ -142,7 +144,7 @@ const CreateUnion = () => {
                             {workplaces.map((workplace, index) => (
                                 <div className="workplace-section" key={index}>
                                     <div className="workplace-header">
-                                        <h4>Workplace {index + 1}</h4>
+                                        <h4>Workplace #{index + 1}</h4>
                                         {index > 0 && (
                                             <button
                                                 type="button"
@@ -170,9 +172,21 @@ const CreateUnion = () => {
                                                 onChange={(e) => handleWorkplaceChange(index, 'organization', e.target.value)}
                                             />
                                         </div>
-                                        <div className="workplace-input invisible">
-                                            <input type="text" disabled />
+                                        <div className="workplace-input">
+                                            <input
+                                                type="number"
+                                                placeholder="Employee Count"
+                                                value={workplace.employeeCount === 0 ? '' : workplace.employeeCount} // Display placeholder if the value is 0
+                                                onChange={(e) =>
+                                                    handleWorkplaceChange(
+                                                        index,
+                                                        'employeeCount',
+                                                        e.target.value === '' ? 0 : parseInt(e.target.value, 10) // Ensure the value is a number or default to 0
+                                                    )
+                                                }
+                                            />
                                         </div>
+
                                         <div className="workplace-input">
                                             <input
                                                 type="text"
@@ -221,6 +235,31 @@ const CreateUnion = () => {
                                                 onChange={(e) => handleWorkplaceChange(index, 'country', e.target.value)}
                                             />
                                         </div>
+                                        <div className="workplace-input radio-container">
+  <p>Is already unionized?:</p>
+  <div className="radio-buttons">
+    <label>
+      <input
+        type="radio"
+        name={`isUnionized-${index}`}
+        checked={workplace.isUnionized === true}
+        onChange={() => handleWorkplaceChange(index, "isUnionized", true)}
+      />
+      Yes
+    </label>
+    <label>
+      <input
+        type="radio"
+        name={`isUnionized-${index}`}
+        checked={workplace.isUnionized === false}
+        onChange={() => handleWorkplaceChange(index, "isUnionized", false)}
+      />
+      No
+    </label>
+  </div>
+</div>
+
+
                                     </div>
                                 </div>
                             ))}

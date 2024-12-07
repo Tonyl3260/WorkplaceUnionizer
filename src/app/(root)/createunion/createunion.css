@@ -208,12 +208,6 @@ html {
   flex: 1 1 32%;
 }
 
-/* Invisible input to make the first row have 3 columns */
-.workplace-input.invisible input {
-  visibility: hidden;
-  width: 100%;
-}
-
 .workplace-input input {
   width: 100%;
 }
@@ -231,6 +225,45 @@ html {
 
 .workplace-container .add-workplace-btn:hover {
   background-color: #294224;
+}
+
+/*radio button styling */
+.radio-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.radio-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+}
+
+.radio-buttons label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  color: #666b62;
+}
+
+.radio-buttons input[type="radio"] {
+  accent-color: #61a653;
+  transform: scale(1.2);
+}
+
+.radio-container p {
+  margin: 0;
+  font-size: 16px;
+  color: #666b62;
+}
+
+.create-union-form input:focus,
+.create-union-form textarea:focus {
+  outline: none;
+  border: 2px solid #a8a8a8; 
 }
 
 /*-------------------------------------------------------------------------*/
@@ -335,11 +368,5 @@ html {
     align-items: flex-start;
     margin-bottom: 20px;
   }
-
-  .union-header {
-    width: 100%;
-  }
-
-
 
 }
