@@ -13,7 +13,7 @@ const CreateUnion = () => {
     const [description, setDescription] = useState('');
     const [workplaces, setWorkplaces] = useState([{ workplaceName: '', organization: '', city: '', street: '', addressLine2: '', state: '', zip: '', country: '' }]);
     const [visibility, setVisibility] = useState('public');
-    const [message, setMessage] = useState(''); 
+    const [message, setMessage] = useState('');
     const { user } = useAppSelector(state => state.auth) as { user: User | null };
     const [loading, setLoading] = useState<boolean>(false);
     const [toggle, setToggle] = useState<boolean>(false);
@@ -57,7 +57,7 @@ const CreateUnion = () => {
     const removeImage = () => {
         setImage(null);
         if (fileInputRef.current) {
-            fileInputRef.current.value = ''; 
+            fileInputRef.current.value = '';
         }
     };
     
@@ -65,6 +65,7 @@ const CreateUnion = () => {
         e.preventDefault();
         setMessage('');
         setLoading(true);
+
       
         try {
           const formData = new FormData();
@@ -93,6 +94,38 @@ const CreateUnion = () => {
           } else {
             setMessage(`Error: ${data.message || 'Failed to create union.'}`);
           }
+
+//         try {
+//             const formData = new FormData();
+//             formData.append('name', name);
+//             formData.append('description', description);
+//             formData.append('visibility', visibility);
+//             formData.append('userId', user?.uid || '');
+//             formData.append('workplaces', JSON.stringify(workplaces));
+//             if (image) {
+//                 formData.append('image', image);
+//             }
+
+//             const response = await fetch('http://localhost:5000/union/create', {
+//                 method: 'POST',
+//                 body: formData,
+//             });
+
+//             const data = await response.json();
+//             console.log(data.id)
+//             console.log(data.data)
+//             if (response.ok) {
+//                 setToggle(true);
+//                 setMessage('Union successfully added to the database!');
+//                 if (data.data.id) {
+//                     // setTimeout(() => {
+//                     router.push(`/joinunionform?unionId=${data.data.id}`);
+//                     // }, 3000);
+//                 }
+//             } else {
+//                 setMessage(`Error: ${data.message}`);
+//             }
+
         } catch (error) {
           console.error('An error occurred:', error);
           setMessage('An error occurred while submitting the form.');
@@ -260,8 +293,8 @@ const CreateUnion = () => {
                                 </label>
                             </div>
                         </div>
-                        {loading ? <PropagateLoader className='align-self-center' /> : 
-                                <button type="submit" className="submit-btn" disabled={toggle}>Submit</button>}
+                        {loading ? <PropagateLoader className='align-self-center' /> :
+                            <button type="submit" className="submit-btn" disabled={toggle}>Submit</button>}
                         {message && <p className="message">{message}</p>}
                     </form>
                 </div>
