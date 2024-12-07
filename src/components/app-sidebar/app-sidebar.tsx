@@ -81,9 +81,14 @@ export function AppSidebar({
     };
   }, []);
 
-  const handleOptionClick = (path: string) => {
+  const handleOptionClick = (path: string, query?: Record<string, string>) => {
     setUnionDropdownOpen(false);
-    router.push(path);
+    if (query) {
+      const queryString = new URLSearchParams(query).toString();
+      router.push(`${path}?${queryString}`);
+    } else {
+      router.push(path);
+    }
   };
 
   // Use the custom hook to fetch workplaces
@@ -270,7 +275,47 @@ export function AppSidebar({
 
             {(isUnionDropdownOpen) && (
               <div className="union-dropdown-menu" ref={dropdownRef}>
-                {
+                <div
+                  className="union-dropdown-item"
+                  onClick={() => setInviteModalOpen(true)}
+                >
+                  Invite Workers
+                </div>
+                <div
+                  className="union-dropdown-item"
+                  onClick={() => handleOptionClick("/joinunionform", { unionId })}
+                >
+                  Edit Invitation Form
+                </div>
+
+                <div
+                  className="union-dropdown-item"
+                  onClick={() => handleOptionClick("/union/manage-members")}
+                >
+                  Manage Members
+                </div>
+                <hr />
+                <div
+                  className="union-dropdown-item"
+                  onClick={() => handleOptionClick("/union/create-poll")}
+                >
+                  Create Poll
+                </div>
+                <div
+                  className="union-dropdown-item"
+                  onClick={() => handleOptionClick("/union/create-workplace")}
+                >
+                  Create Workplace
+                </div>
+                <hr />
+                <div
+                  className="union-dropdown-item"
+                  onClick={() => handleOptionClick("/union/server-settings")}
+                >
+                  Server Settings
+                </div>
+
+<!--                 {
                   (role == "admin") ? (
                     <>
                       <div
@@ -350,7 +395,7 @@ export function AppSidebar({
                         </div>
 
                       </div></>
-                }
+                } -->
 
               </div>
             )
@@ -365,7 +410,13 @@ export function AppSidebar({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <div className="poll-button" onClick={() => setPollModalOpen(true)}>
+                    <div
+                      className="poll-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPollModalOpen(true);
+                      }}
+                    >
                       Unionize Poll
                     </div>
                   </SidebarMenuButton>
