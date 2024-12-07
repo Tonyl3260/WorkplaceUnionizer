@@ -190,12 +190,32 @@ html {
 }
 
 .workplace-input {
+  position: relative;
   flex: 1 1 32%;
   min-width: 180px;
   max-height: 50px;
   font-size: 15px;
-}
+  .star {
+    color: red;
+    user-select: none;
+  }
+  .pos {
+    position: relative;
+    top: 16px;
+    left: 11px; 
+    z-index: 1;
+    font-size: 15px;
+    cursor: text;
+    user-select: none;
+  }
 
+  .box {
+    position: relative;
+    bottom: 22.5px;
+    z-index: 0;
+    cursor: text;
+  }
+}
 .workplace-group>.workplace-input:nth-child(3),
 .workplace-group>.workplace-input:nth-child(4),
 .workplace-group>.workplace-input:nth-child(5) {
