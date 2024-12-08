@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,7 +21,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useAppDispatch } from "@/lib/redux/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks/redux";
 import { setAuthState } from "@/lib/redux/features/auth/authSlice";
 import { generateKeyPair } from "@/lib/util/encryptionCalls";
 import { storePrivateKey } from "@/lib/util/IndexedDBCalls";
@@ -36,13 +36,19 @@ const SignUpSchema = SignUpValidation.extend({
 
 const signup = () => {
   const router = useRouter();
+  const [pageLoad, setPageLoad] = useState<boolean>()
   const searchParams = useSearchParams(); // To get query parameters
+  const { isAuthenticated } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const redirectUri = searchParams?.get("redirect_uri") || "/search"; // Default redirect to /search if none provided
-
+  useEffect(() => {
+    if (isAuthenticated !== null) {
+      setPageLoad(true)
+    }
+  }, [])
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -108,96 +114,103 @@ const signup = () => {
   }
 
   return (
-    <div className="signup-container">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="signup-form">
-          <div className="signup-header">
-            <h1 className="signup-title">Create an Account</h1>
-          </div>
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
+    <>
+      {pageLoad ?
+        <div className="signup-container">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="signup-form">
+              <div className="signup-header">
+                <h1 className="signup-title">Create an Account</h1>
+              </div>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem className="form-item">
+                    <FormLabel className="form-label">Username</FormLabel>
+                    <FormControl className="form-control">
+                      <Input
+                        placeholder="Enter your username"
+                        className="form-input"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="form-item">
+                    <FormLabel className="form-label">Email</FormLabel>
+                    <FormControl className="form-control">
+                      <Input
+                        placeholder="Enter your email"
+                        className="form-input"
+                        {...form.register("email")}
+                      />
+                    </FormControl>
+                    <FormMessage className="form-message" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="form-item">
+                    <FormLabel className="form-label">Password</FormLabel>
+                    <FormControl className="form-control">
+                      <Input
+                        placeholder="Enter your password"
+                        type="password"
+                        className="form-input"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="form-message" />
+                  </FormItem>
+                )}
+              />
               <FormItem className="form-item">
-                <FormLabel className="form-label">Username</FormLabel>
+                <FormLabel className="form-label">Confirm Password</FormLabel>
                 <FormControl className="form-control">
                   <Input
-                    placeholder="Enter your username"
-                    className="form-input"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="form-item">
-                <FormLabel className="form-label">Email</FormLabel>
-                <FormControl className="form-control">
-                  <Input
-                    placeholder="Enter your email"
-                    className="form-input"
-                    {...form.register("email")}
-                  />
-                </FormControl>
-                <FormMessage className="form-message" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="form-item">
-                <FormLabel className="form-label">Password</FormLabel>
-                <FormControl className="form-control">
-                  <Input
-                    placeholder="Enter your password"
+                    placeholder="Confirm your password"
                     type="password"
                     className="form-input"
-                    {...field}
+                    {...form.register("confirmPassword")}
                   />
                 </FormControl>
                 <FormMessage className="form-message" />
               </FormItem>
-            )}
-          />
-          <FormItem className="form-item">
-            <FormLabel className="form-label">Confirm Password</FormLabel>
-            <FormControl className="form-control">
-              <Input
-                placeholder="Confirm your password"
-                type="password"
-                className="form-input"
-                {...form.register("confirmPassword")}
-              />
-            </FormControl>
-            <FormMessage className="form-message" />
-          </FormItem>
 
-          <div className="button-container">
-            {loading ? (
-              <div className="submit-button">
-                <PropagateLoader className="relative right-2 bottom-2" />
+              <div className="button-container">
+                {loading ? (
+                  <div className="submit-button">
+                    <PropagateLoader className="relative right-2 bottom-2" />
+                  </div>
+                ) : (
+                  <div>
+                    {error && <p className="error-message">{error}</p>}
+                    <Button type="submit" className="submit-button">
+                      Sign Up
+                    </Button>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div>
-                {error && <p className="error-message">{error}</p>}
-                <Button type="submit" className="submit-button">
-                  Sign Up
-                </Button>
-              </div>
-            )}
-          </div>
-          <h3 className="signup-login-link">
-            Already have an account? <Link href="/auth/login">Login</Link>
-          </h3>
-        </form>
-      </Form>
-    </div>
+              <h3 className="signup-login-link">
+                Already have an account? <Link href="/auth/login">Login</Link>
+              </h3>
+            </form>
+          </Form>
+        </div>
+        :
+        <PropagateLoader />
+      }
+
+    </>
   );
 };
 

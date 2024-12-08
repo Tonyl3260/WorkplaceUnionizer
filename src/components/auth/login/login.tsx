@@ -21,7 +21,7 @@ import { setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth } from "../../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
-import { useAppDispatch } from "@/lib/redux/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks/redux";
 import { setAuthState } from "@/lib/redux/features/auth/authSlice";
 import { setUserUnions } from "@/lib/redux/features/user_unions/userUnionsSlice";
 import "./signin.css";
@@ -31,9 +31,10 @@ const Login = () => {
     const searchParams = useSearchParams(); // To get query parameters
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState<boolean>(false);
+    const { isAuthenticated, isLoading, user } = useAppSelector(state => state.auth);
     const [error, setError] = useState<boolean>(false);
     const redirectUri = searchParams?.get("redirect_uri") || "/search"; // Default redirect to /search if none provided
-
+    const [pageLoad, setPageLoad] = useState<boolean>(false)
     const form = useForm<z.infer<typeof SignInValidation>>({
         resolver: zodResolver(SignInValidation),
         defaultValues: {
@@ -43,6 +44,7 @@ const Login = () => {
     });
 
     useEffect(() => {
+
         setPersistence(auth, browserLocalPersistence)
             .then(() => {
                 console.log("Persistence set successfully");
@@ -124,80 +126,86 @@ const Login = () => {
     }
 
     return (
-        <div className="login-container">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="login-form">
-                    <div className="login-header">
-                        <h2 className="title">Login</h2>
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem className="form-item">
-                                <FormLabel className="form-label">Email</FormLabel>
-                                <FormControl className="form-control">
-                                    <Input
-                                        className="form-input"
-                                        placeholder="Enter your email"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage className="form-message" />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem className="form-item">
-                                <FormLabel className="form-label">Password</FormLabel>
-                                <FormControl className="form-control">
-                                    <Input
-                                        className="form-input"
-                                        placeholder="Enter your password"
-                                        type="password"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage className="form-message" />
-                            </FormItem>
-                        )}
-                    />
+        <>
+            {/* {pageLoad ?  */}
+            <div className="login-container">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="login-form">
+                        <div className="login-header">
+                            <h2 className="title">Login</h2>
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem className="form-item">
+                                    <FormLabel className="form-label">Email</FormLabel>
+                                    <FormControl className="form-control">
+                                        <Input
+                                            className="form-input"
+                                            placeholder="Enter your email"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="form-message" />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem className="form-item">
+                                    <FormLabel className="form-label">Password</FormLabel>
+                                    <FormControl className="form-control">
+                                        <Input
+                                            className="form-input"
+                                            placeholder="Enter your password"
+                                            type="password"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="form-message" />
+                                </FormItem>
+                            )}
+                        />
 
-                    <h3 className="forgot-password">
-                        <a href="/auth/forgotpassword">Forgot Password?</a>
-                    </h3>
-                    <div className="button-container">
-                        {loading ? (
-                            <div className="submit-button">
-                                <PropagateLoader className="relative right-2 bottom-2" />
-                            </div>
-                        ) : (
-                            <div className="text-red-600 font-semibold mb-4">
-                                {error ? "Incorrect Email or Password" : null}
-                                <Button className="submit-button" type="submit">
-                                    Login
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                    <h3 className="signup-link">
-                        New to Unionizer?{" "}
-                        <Link
-                            href={{
-                                pathname: "/auth/signup",
-                                query: { redirect_uri: searchParams?.get("redirect_uri") || "/search" },
-                            }}
-                        >
-                            Join now
-                        </Link>
-                    </h3>
+                        <h3 className="forgot-password">
+                            <a href="/auth/forgotpassword">Forgot Password?</a>
+                        </h3>
+                        <div className="button-container">
+                            {loading ? (
+                                <div className="submit-button">
+                                    <PropagateLoader className="relative right-2 bottom-2" />
+                                </div>
+                            ) : (
+                                <div className="text-red-600 font-semibold mb-4">
+                                    {error ? "Incorrect Email or Password" : null}
+                                    <Button className="submit-button" type="submit">
+                                        Login
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                        <h3 className="signup-link">
+                            New to Unionizer?{" "}
+                            <Link
+                                href={{
+                                    pathname: "/auth/signup",
+                                    query: { redirect_uri: searchParams?.get("redirect_uri") || "/search" },
+                                }}
+                            >
+                                Join now
+                            </Link>
+                        </h3>
 
-                </form>
-            </Form>
-        </div>
+                    </form>
+                </Form>
+            </div>
+            {/* : <PropagateLoader />} */}
+
+        </>
+
     );
 };
 

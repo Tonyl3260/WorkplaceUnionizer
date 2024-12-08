@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks/redux';
 import { doSignOut } from "../../firebase/auth";
 import { listenToAuthChanges } from '@/lib/redux/features/auth/authSlice';
+import { useLayoutEffect } from 'react';
 import './horizontal-navbar.css';
 
 interface HorizontalNavbarProps {
@@ -33,8 +34,6 @@ const HorizontalNavbar: React.FC<HorizontalNavbarProps> = ({ pageName }) => {
     };
 
     useEffect(() => {
-        dispatch(listenToAuthChanges());
-
         if (isDropdownOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
@@ -57,9 +56,9 @@ const HorizontalNavbar: React.FC<HorizontalNavbarProps> = ({ pageName }) => {
     };
 
     const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault(); 
-        router.push(isAuthenticated ? "/search" : "/"); 
-    };    
+        e.preventDefault();
+        router.push(isAuthenticated ? "/search" : "/");
+    };
 
     const getDynamicPageName = () => {
         if (pathname.startsWith("/joinunion")) {
@@ -133,7 +132,7 @@ const HorizontalNavbar: React.FC<HorizontalNavbarProps> = ({ pageName }) => {
                                         {user?.displayName}
                                     </span>
                                 </li>
-                                <li onClick={() => {router.push('/settings/basic/profile')}}>
+                                <li onClick={() => { router.push('/settings/basic/profile') }}>
                                     <Link href="/settings/basic/profile">Account Settings</Link>
                                 </li>
                                 <hr />

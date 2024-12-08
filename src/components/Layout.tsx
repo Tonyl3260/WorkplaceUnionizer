@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks/redux';
@@ -9,18 +9,20 @@ import './resource-popup.css';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar/app-sidebar"
 import DynamicSidebar from './dynamic-navbar';
-
+import { listenToAuthChanges } from '@/lib/redux/features/auth/authSlice';
+import PropagateLoader from 'react-spinners/PropagateLoader';
+import HomePage from '@/app/page';
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const router = useRouter();
+    const [loading, setLoading] = useState<boolean>(true)
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const { user } = useAppSelector(state => state.auth)
+    const { isAuthenticated, user } = useAppSelector(state => state.auth)
     const { unions } = useAppSelector(state => state.userUnion)
     const [currUnion, setCurrUnion] = useState<object | null>(null)
     const dispatch = useAppDispatch()
     const popupRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLDivElement>(null);
-
     const togglePopup = () => {
         setIsPopupOpen((prev) => !prev);
     };
@@ -85,6 +87,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         }
     }
     useEffect(() => {
+        if (isAuthenticated != null) {
+            setLoading(false)
+        }
+    }, [dispatch])
+    useEffect(() => {
         if (pathname === '/resources') {
             setIsPopupOpen(true);
         }
@@ -141,27 +148,32 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div className="h-[calc(100vh-80px)] page-wrapper mt-[80px] ml-[90px]">
-            <div className="horizontal-navbar-container">
-                <HorizontalNavbar pageName={getDynamicPageName()} />
-            </div>
-            <div className="h-[calc(100vh-80px)]">
-                <div className="vertical-navbar-container">
-                    <VerticalNavbar togglePopup={togglePopup} buttonRef={buttonRef} unions={unions} handleUnionClick={handleUnionClick} />
-                </div>
-                {currUnion ?
-                    <SidebarProvider>
-                        <AppSidebar
-                            chats={currUnion?.chats || []}
-                            unionName={currUnion?.name || ''}
-                            unionId={currUnion?.id || ''}
-                            role={currUnion?.role || ''}
-                            userId={user?.uid}
-                        />
-                        <div className="page-content">
-                            {children}
+            {!loading ?
+                <>
+                    <div className="horizontal-navbar-container">
+                        <HorizontalNavbar pageName={getDynamicPageName()} />
+                    </div>
+                    <div className="h-[calc(100vh-80px)]">
+                        <div className="vertical-navbar-container">
+                            <VerticalNavbar togglePopup={togglePopup} buttonRef={buttonRef} unions={unions} handleUnionClick={handleUnionClick} />
                         </div>
-                    </SidebarProvider> : <div>{children}</div>}
-            </div>
+                        {currUnion ?
+                            <SidebarProvider>
+                                <AppSidebar
+                                    chats={currUnion?.chats || []}
+                                    unionName={currUnion?.name || ''}
+                                    unionId={currUnion?.id || ''}
+                                    role={currUnion?.role || ''}
+                                    userId={user?.uid}
+                                />
+                                <div className="page-content">
+                                    {children}
+                                </div>
+                            </SidebarProvider> : <div>{children}</div>}
+                    </div></>
+                : <PropagateLoader />}
+
+
 
             {pathname.includes("settings") ?
                 <DynamicSidebar /> : ""

@@ -5,6 +5,7 @@ import { useAppSelector } from "@/lib/redux/hooks/redux";
 import { useEffect } from 'react';
 import HorizontalNavbar from '@/components/horizontal-navbar/horizontal-navbar';
 import './home.css';
+import PropagateLoader from "react-spinners/PropagateLoader";
 
 interface User {
   displayName?: string;
@@ -23,7 +24,7 @@ export default function HomePage() {
   // Redirect logged-in users to /search
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.replace('/search'); 
+      router.replace('/search');
     }
   }, [isAuthenticated, isLoading, router]);
 
@@ -31,7 +32,7 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <div className="loading-screen">
-        <p>Loading...</p> 
+        <PropagateLoader />
       </div>
     );
   }
