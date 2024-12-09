@@ -4,6 +4,8 @@ import { Modal } from "@/components/ui/modal";
 import useWorkplaces from "@/hooks/useWorkplaces";
 import { useAppDispatch } from "@/lib/redux/hooks/redux";
 import { setUserUnions } from "@/lib/redux/features/user_unions/userUnionsSlice";
+import ManageMembersModal from "@/components/manage-members-modal/ManageMembersModal";
+
 import {
   Sidebar,
   SidebarContent,
@@ -45,14 +47,14 @@ export function AppSidebar({
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const [inviteLink, setInviteLink] = useState<string>("");
   const [copyMessage, setCopyMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const [isManageMembersModalOpen, setManageMembersModalOpen] = useState(false);  
   const [selectedWorkplace, setSelectedWorkplace] = useState<{
     id: string;
     employeeCount: number;
     name: string;
   } | null>(null);
-
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
@@ -366,7 +368,7 @@ export function AppSidebar({
 
                       <div
                         className="union-dropdown-item"
-                        onClick={() => handleOptionClick("/union/manage-members")}
+                        onClick={() => setManageMembersModalOpen(true)}
                       >
                         Manage Members
                       </div>
@@ -692,6 +694,11 @@ export function AppSidebar({
           </div>
         </Modal>
       )}
-    </div >
+      <ManageMembersModal
+        isOpen={isManageMembersModalOpen}
+        onClose={() => setManageMembersModalOpen(false)}
+        unionId={unionId}
+      />
+    </div>
   );
 }

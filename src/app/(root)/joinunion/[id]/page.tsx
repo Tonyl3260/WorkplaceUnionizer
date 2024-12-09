@@ -123,6 +123,7 @@ const JoinUnion = () => {
         userId: user?.uid,
         unionId,
         role: "general",
+        displayName: user?.displayName
       };
 
       const joinResponse = await fetch(`http://localhost:5000/union/joinUnion`, {
