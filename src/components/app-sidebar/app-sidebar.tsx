@@ -585,6 +585,21 @@ export function AppSidebar({
                 }}
               />
             </div>
+            {/* Automatically fetch and display total employees */}
+            <div className="employee-input">
+              <label htmlFor="employee-count">Total Number of Employees:</label>
+              <input
+                id="employee-count"
+                type="number"
+                value={totalEmployees || ""}
+                readOnly
+                placeholder="Fetching employee count..."
+                style={{
+                  backgroundColor: "#e0e0e0",
+                  cursor: "not-allowed",
+                }}
+              />
+            </div>
             <ul className="poll-options">
               {["yes", "no"].map((option) => (
                 <li
