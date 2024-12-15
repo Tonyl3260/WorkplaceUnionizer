@@ -27,9 +27,9 @@ const page: FC<pageProps> = ({ params }: pageProps) => {
     }, [])
     return (
         <Layout>
-            <SocketProvider>
-                <Chat />
-            </SocketProvider>
+
+            <Chat />
+
         </Layout>
     )
 }

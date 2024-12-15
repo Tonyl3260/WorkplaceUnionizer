@@ -28,31 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         setIsPopupOpen((prev) => !prev);
     };
 
-    // useEffect(() => {
-    //     if (socket) {
-    //         socketRef.current = socket;
 
-    //         // Check if the socket is connected
-    //         setIsConnected(socket.connected);
-
-    //         // Listen to the 'connect' and 'disconnect' events
-    //         socket.on("connect", () => {
-    //             console.log("Socket connected");
-    //             setIsConnected(true);
-    //         });
-
-    //         socket.on("disconnect", () => {
-    //             console.log("Socket disconnected");
-    //             setIsConnected(false);
-    //         });
-
-    //         // Clean up listeners
-    //         return () => {
-    //             socket.off("connect");
-    //             socket.off("disconnect");
-    //         };
-    //     }
-    // }, [socket]);
     const [openDropdowns, setOpenDropdowns] = useState<number[]>([]);
 
     const toggleDropdown = (dropdownIndex: number) => {
@@ -199,14 +175,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="horizontal-navbar-container">
                 <HorizontalNavbar pageName={getDynamicPageName()} />
             </div>
-            <VerticalNavbar togglePopup={togglePopup} buttonRef={buttonRef} unions={unions} handleUnionClick={handleUnionClick} currUnion={currUnion} user={user} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
-                {children}
-            </VerticalNavbar>
-            <div className="h-[calc(100vh-80px)] justify-center w-full">
-                <div className='' onClick={() => { setSidebarOpen(false) }} >
+            <SocketProvider>
+                <VerticalNavbar togglePopup={togglePopup} buttonRef={buttonRef} unions={unions} handleUnionClick={handleUnionClick} currUnion={currUnion} user={user} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
                     {children}
+                </VerticalNavbar>
+                <div className="h-[calc(100vh-80px)] justify-center w-full">
+                    <div className='' onClick={() => { setSidebarOpen(false) }} >
+                        {children}
+                    </div>
                 </div>
-            </div>
+            </SocketProvider>
 
             {/* {pathname.includes("settings") ?
                 <DynamicSidebar /> : ""
