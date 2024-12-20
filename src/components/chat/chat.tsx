@@ -68,8 +68,8 @@ const Chat: FC = () => {
         resolver: zodResolver(FormSchema),
     });
     useEffect(() => {
-        if (socket) {
-            socketRef.current = socket;
+        socketRef.current = socket;
+        if (socket && user?.uid) {
 
             // Check if the socket is connected
             setIsConnected(socket.connected);

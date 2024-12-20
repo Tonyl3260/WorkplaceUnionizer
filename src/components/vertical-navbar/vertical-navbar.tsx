@@ -66,7 +66,7 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = ({
     return color;
   };
   useEffect(() => {
-    if (socket) {
+    if (socket && user?.uid) {
 
       socketRef.current = socket
       setIsConnected(socket.connected);
@@ -74,11 +74,13 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = ({
       // Listen to the 'connect' and 'disconnect' events
       socket.on("connect", () => {
         console.log("Socket connected");
+        socket.emit("user_connected", user?.uid)
         setIsConnected(true);
       });
 
       socket.on("disconnect", () => {
         console.log("Socket disconnected");
+
         setIsConnected(false);
       });
 
@@ -88,7 +90,7 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = ({
         socket.off("disconnect");
       };
     }
-  }, [socket]);
+  }, [socket, user]);
   useEffect(() => {
     socketRef.current?.on('user_join_request_notification', (notification) => {
       setNotifications((old) => [...old, notification])
